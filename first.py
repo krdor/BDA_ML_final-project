@@ -6,6 +6,7 @@ from sklearn.cluster import KMeans, MeanShift, DBSCAN, estimate_bandwidth
 from sklearn import metrics
 
 default_settings = {
+    "n_clusters": 2,
     "quantile": 0.3,
     "eps": 0.3,
     "dataset_name": "",
@@ -13,11 +14,10 @@ default_settings = {
     "y_axis": "y coordinates"
 }
 
-n_clusters = 3
 n_samples = 500
 
 # Generating artificial datasets and arranging them into a list to iterate over
-blobs, _ = make_blobs(n_samples=500, centers=n_clusters, cluster_std=1, random_state=1407)
+blobs, _ = make_blobs(n_samples=500, centers=3, cluster_std=1, random_state=1407)
 noisy_circles, _ = make_circles(n_samples=n_samples, factor=0.5, noise=0.05)
 noisy_moons, _ = make_moons(n_samples=n_samples, noise=0.05)
 
@@ -28,6 +28,7 @@ wines = df[['Alcohol', 'Color_Intensity']].to_numpy()
 datasets = [
     (blobs,
      {
+         "n_clusters": 3,
          "quantile": 0.2,
          "eps": 0.5,
          "dataset_name": "artificially constructed clusters"
@@ -65,7 +66,7 @@ for (dataset, algo_params) in datasets:
     validation = {'method': ['kmeans', 'meanshift', 'dbscan'], 'Silhouette Coefficient': [],
                   'Calinski-Harabasz Index': [], 'Davies-Bouldin Index': []}
 
-    kmeans = KMeans(n_clusters=n_clusters, init='random', n_init='auto')
+    kmeans = KMeans(n_clusters=params['n_clusters'], init='random', n_init='auto')
     kmeans.fit_predict(dataset)
     axs[0, 1].scatter(dataset[:, 0], dataset[:, 1], c=kmeans.labels_)
     axs[0, 1].scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=50, c='red', alpha=.5)
